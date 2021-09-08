@@ -20,23 +20,25 @@ client.on('messageCreate', message => {
     console.log(message);
     let parsed = parse(message,prefix);
     if (!parsed.success) { return; }
+    let game = parsed.arguments[GAME];
+    let alias = parsed.arguments[ALIAS];
+    let guildId = message.guildId;
+    let profileId = message.author.id;
+    let discordName = message.author.username;
     switch(parsed.command) {
       case 'shutdown':
           client.destroy();
           break;
       case 'wanttoplay':
-        let game = parsed.arguments[GAME];
-        let alias = parsed.arguments[ALIAS];
-        let guildId = message.guildId;
-        let profileId = message.author.id;
-        let discordName = message.author.username;
-        let resultMessage =  wantToPlayController.wantsToPlay({"guildId" : guildId, "profileId" : profileId,
+
+        let registerMessage =  wantToPlayController.wantsToPlay({"guildId" : guildId, "profileId" : profileId,
             "discordName" : discordName, "game" : game, "alias" : alias});
-        message.reply(resultMessage);
+        message.reply(registerMessage);
         break;
       case 'whoplays':
-        let resultMessage = wantsToPlayController.whoPlays({"guildId:" guildId, "profileId" : profileId, "discordName" : discordName, "game" : game, "alias" : alias});
-        message.reply(resultMessage);
+        let findMessage = wantToPlayController.whoPlays({"guildId": guildId, "profileId" : profileId, "discordName" : discordName, "game" : game, "alias" : alias});
+        console.log(findMessage);
+        //message.reply(findMessage);
     }
 });
 client.login(token);

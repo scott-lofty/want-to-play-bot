@@ -9,7 +9,7 @@ export class WantToPlayController {
   }
   wantsToPlay(gameToPlay : WantToPlay)  : string {
     try {
-        let data =  {"TableName" : "want-to-play", "Item" : {"discordName" : {"S" : gameToPlay.discordName}, "guildId" :  {"S" : gameToPlay.guildId}, "profileId" : {"S" : gameToPlay.profileId}, "game" : {"S" : gameToPlay.game}, "alias" : {"S" : gameToPlay.alias}}};
+        let data =  {"TableName" : "want-to-play", "Item" : {"discord-name" : {"S" : gameToPlay.discordName}, "guild-game-alias" :  {"S" : gameToPlay.guildId + "|" + gameToPlay.game + "|" + gameToPlay.alias}, "profile-id" : {"S" : gameToPlay.profileId}}};
         let command = new PutItemCommand(data);
         console.log("PutItemCommand:" + command);
         this.awsDataStore.save(data);
@@ -17,5 +17,24 @@ export class WantToPlayController {
     } catch(error) {
         return "Unfortunately, an error occurred while attempting to register your interest in game " + gameToPlay.game + ".";
     }
+  }
+  whoPlays(gamesToFind : WantToPlay) : string {
+    let alias = '';
+    if (!gamesToFind.alias) {
+      alias = '|' + gamesToFind.alias;
+    }
+    let data = {
+        TableName: "want-to-play",
+        KeyConditionExpression: "#guildgamealias begins_with(:guildgamealias)",
+        ExpressionAttributeNames: {
+          "#guildgamealais" : "guild-game-alias"
+        },
+        ExpressionAttributeValues: {
+              ":guildgamealias": {"S" : gamesToFind.guildId + "|" + gamesToFind.game + alias}
+        },
+        FilterExpression: "profile-id <> " + gamesToFind.profileId
+    }
+    let results = this.awsDataStore.find(data);
+    return "yay";
   }
 }
