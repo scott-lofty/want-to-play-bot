@@ -9,7 +9,7 @@ export class WantToPlayController {
   }
   wantsToPlay(gameToPlay : WantToPlay)  : string {
     try {
-        let data =  {"TableName" : "want-to-play", "Item" : {"discord-name" : {"S" : gameToPlay.discordName}, "guild-game-alias" :  {"S" : gameToPlay.guildId + "|" + gameToPlay.game + "|" + gameToPlay.alias}, "profile-id" : {"S" : gameToPlay.profileId}}};
+        let data =  {"TableName" : "want-to-play", "Item" : {"guild" : {"S" : gameToPlay.guildId}, "discord_name" : {"S" : gameToPlay.discordName}, "game_profile" :  {"S" : gameToPlay.game + "|" + gameToPlay.profileId}, "game_alias" : {"S" : gameToPlay.game + "|" + gameToPlay.alias}}};
         let command = new PutItemCommand(data);
         console.log("PutItemCommand:" + command);
         this.awsDataStore.save(data);
@@ -18,23 +18,39 @@ export class WantToPlayController {
         return "Unfortunately, an error occurred while attempting to register your interest in game " + gameToPlay.game + ".";
     }
   }
-  whoPlays(gamesToFind : WantToPlay) : string {
+  whoPlays(gamesToFind : WantToPlay) : Promise<string> {
     let alias = '';
     if (!gamesToFind.alias) {
-      alias = '|' + gamesToFind.alias;
+      alias = gamesToFind.alias;
     }
-    let data = {
+    console.log("Building data packet");
+    let criteria = {
         TableName: "want-to-play",
-        KeyConditionExpression: "#guildgamealias begins_with(:guildgamealias)",
-        ExpressionAttributeNames: {
-          "#guildgamealais" : "guild-game-alias"
-        },
+        IndexName: "guild-game_alias-index",
+        KeyConditionExpression: "guild = :guild and begins_with(game_alias,:game_alias)",
         ExpressionAttributeValues: {
-              ":guildgamealias": {"S" : gamesToFind.guildId + "|" + gamesToFind.game + alias}
-        },
-        FilterExpression: "profile-id <> " + gamesToFind.profileId
+              ":game_alias": {"S" : gamesToFind.game + '|'},
+              ":guild" : {"S" : gamesToFind.guildId}
+            //  ":profile_id" : {"S" : gamesToFind.profileId}
+        }
+        //FilterExpression: "#profile-id <> " + gamesToFind.profileId
     }
-    let results = this.awsDataStore.find(data);
-    return "yay";
+    console.log("Calling find with data packet");
+    console.log(criteria);
+    const peopleWhoPlay = this.awsDataStore.find(criteria).then((resolved) => {
+      let discordIds = '';
+      for(let i = 0; i < resolved.Items.length;++i) {
+        console.log("Items");
+        console.log(resolved.Items);
+        discordIds = discordIds + " " + resolved.Items[i].discord_name.S + ",";
+      }
+      if (!discordIds) {
+        discordIds = "No one wants to play game " + gamesToFind.game + ".";
+      } else {
+        discordIds = discordIds.slice(0,discordIds.lastIndexOf('.'));
+      }
+      return Promise.resolve(discordIds);
+    });
+    return peopleWhoPlay;
   }
 }

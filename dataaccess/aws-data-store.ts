@@ -12,8 +12,8 @@ export class AwsDataStore {
   }
 
   async find(itemQuery : QueryCommandInput) {
-    let queryCommand = new QueryCommand(itemQuery);
-    let results = await this.dynamoDbClient.send(queryCommand);
-    return results
+    console.log("Waiting on find");
+    let results = [];
+    return await this.dynamoDbClient.query(itemQuery);
   }
 }

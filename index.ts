@@ -13,11 +13,10 @@ const ALIAS = 1;
 
 
 client.on('ready', () => {
-  console.log('Bot is ready')
+  console.log('2.0.0 Bot is ready')
 });
 
 client.on('messageCreate', message => {
-    console.log(message);
     let parsed = parse(message,prefix);
     if (!parsed.success) { return; }
     let game = parsed.arguments[GAME];
@@ -30,15 +29,23 @@ client.on('messageCreate', message => {
           client.destroy();
           break;
       case 'wanttoplay':
-
+      console.log("1.0.3 Attempting to write to dynamodb");
         let registerMessage =  wantToPlayController.wantsToPlay({"guildId" : guildId, "profileId" : profileId,
             "discordName" : discordName, "game" : game, "alias" : alias});
         message.reply(registerMessage);
         break;
       case 'whoplays':
-        let findMessage = wantToPlayController.whoPlays({"guildId": guildId, "profileId" : profileId, "discordName" : discordName, "game" : game, "alias" : alias});
-        console.log(findMessage);
-        //message.reply(findMessage);
+        console.log("1.0.0 Attempting to find players for game " + game + " on guild " + guildId);
+        wantToPlayController.whoPlays({"guildId": guildId,
+          "profileId" : profileId,
+          "discordName" : discordName,
+           "game" : game,
+           "alias" : alias}).then((resolved) => {
+             if (resolved) {
+               message.reply(resolved);
+             }
+           });
+        console.log("1.0.2 Completed find operation");
     }
 });
 client.login(token);
