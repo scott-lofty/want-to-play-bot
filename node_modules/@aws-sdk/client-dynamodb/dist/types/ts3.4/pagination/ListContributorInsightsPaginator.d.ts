@@ -1,4 +1,0 @@
-import { ListContributorInsightsCommandInput, ListContributorInsightsCommandOutput } from "../commands/ListContributorInsightsCommand";
-import { DynamoDBPaginationConfiguration } from "./Interfaces";
-import { Paginator } from "@aws-sdk/types";
-export declare function paginateListContributorInsights(config: DynamoDBPaginationConfiguration, input: ListContributorInsightsCommandInput, ...additionalArguments: any): Paginator<ListContributorInsightsCommandOutput>;
