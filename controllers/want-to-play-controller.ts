@@ -30,10 +30,10 @@ export class WantToPlayController {
         KeyConditionExpression: "guild = :guild and begins_with(game_alias,:game_alias)",
         ExpressionAttributeValues: {
               ":game_alias": {"S" : gamesToFind.game + '|'},
-              ":guild" : {"S" : gamesToFind.guildId}
-            //  ":profile_id" : {"S" : gamesToFind.profileId}
-        }
-        //FilterExpression: "#profile-id <> " + gamesToFind.profileId
+              ":guild" : {"S" : gamesToFind.guildId},
+              ":profile_id" : {"S" : gamesToFind.profileId}
+        },
+        FilterExpression: "profile_id <> :profile_id",
     }
     console.log("Calling find with data packet");
     console.log(criteria);
