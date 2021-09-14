@@ -2,8 +2,6 @@ import process from 'process';
 
 export class EnvironmentService {
 
-  private discordToken : string = '';
-  private commandPrefix : string = '';
 
   getDiscordToken() : string {
     let value = '';
@@ -15,9 +13,17 @@ export class EnvironmentService {
   }
 
   getCommandPrefix() : string {
-    let value = '!';
+    let value = '';
     if (process.env.COMMAND_PREFIX) {
       value = process.env.COMMAND_PREFIX;
+    }
+    return value;
+  }
+
+  getBotChannel() : string {
+    let value = '';
+    if (process.env.BOT_CHANNEL) {
+      value = process.env.BOT_CHANNEL;
     }
     return value;
   }

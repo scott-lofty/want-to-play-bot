@@ -11,6 +11,7 @@ const wantToPlayController = new WantToPlayController({"region": "us-east-1","cr
 const GAME = 0;
 const ALIAS = 1;
 const envServices = new EnvironmentService();
+const BOT_CHANNEL = envServices.getBotChannel();
 
 client.on('ready', () => {
   console.log('2.0.0 Bot is ready')
@@ -25,7 +26,11 @@ client.on('messageCreate', message => {
     let guildId = message.guildId;
     let profileId = message.author.id;
     let discordName = message.author.username;
-    switch(parsed.command) {
+
+      if (!BOT_CHANNEL) && {
+          return;
+      }
+      switch(parsed.command) {
       case 'shutdown':
           client.destroy();
           break;
