@@ -13,7 +13,7 @@ export class EnvironmentService {
   }
 
   getCommandPrefix() : string {
-    let value = '';
+    let value = '!';
     if (process.env.COMMAND_PREFIX) {
       value = process.env.COMMAND_PREFIX;
     }

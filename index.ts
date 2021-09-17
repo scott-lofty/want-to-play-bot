@@ -13,21 +13,27 @@ const ALIAS = 1;
 const envServices = new EnvironmentService();
 const BOT_CHANNEL = envServices.getBotChannel();
 
+
 client.on('ready', () => {
   console.log('2.0.0 Bot is ready')
 });
 
 client.on('messageCreate', message => {
-  console.log("message");
+  console.log(message);
+  console.log(envServices.getCommandPrefix());
     let parsed = parse(message,envServices.getCommandPrefix());
-    if (!parsed.success) { return; }
+    if (!parsed.success) { console.log("Unsuccessful parse:" + parsed.command); return; }
     let game = parsed.arguments[GAME];
     let alias = parsed.arguments[ALIAS];
     let guildId = message.guildId;
     let profileId = message.author.id;
     let discordName = message.author.username;
+    let channelId = message.channelId;
 
-      if (!BOT_CHANNEL) && {
+      console.log(BOT_CHANNEL);
+      console.log(channelId);
+      if ((BOT_CHANNEL) && (!(BOT_CHANNEL === channelId ))) {
+          console.log("Bot channels do not match.");
           return;
       }
       switch(parsed.command) {
