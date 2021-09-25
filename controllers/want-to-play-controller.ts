@@ -38,6 +38,9 @@ export class WantToPlayController {
     console.log("Calling find with data packet");
     console.log(criteria);
     const peopleWhoPlay = this.awsDataStore.find(criteria).then((resolved) => {
+/*      if (rejected) {
+        Promise.reject("Unfortunately, something went wrong and I can't read the stored data.")
+      }*/
       let discordIds = '';
       for(let i = 0; i < resolved.Items.length;++i) {
         console.log("Items");
